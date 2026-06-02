@@ -241,6 +241,12 @@ timing data to improve estimates.",
         help="Continue running after a test failure (default: True)",
     )
     parser.add_argument(
+        "--enable-coverage",
+        action="store_true",  # 不带参数时为 True，带参数时为 False
+        default=False,       # 默认值
+        help="Enable code coverage collection (default: False)",
+    )
+    parser.add_argument(
         "--timing-report-json",
         type=Path,
         default=Path("test_timing_data.json"),
@@ -265,6 +271,7 @@ timing data to improve estimates.",
     exit_code, records = run_tests(
         files,
         continue_on_error=args.continue_on_error,
+        enable_coverage=args.enable_coverage,
     )
 
     _save_timing_json(records, args.suite, args.auto_partition_id, args.auto_partition_size, args.timing_report_json)
