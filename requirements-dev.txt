@@ -23,3 +23,4 @@ pytest_mock
 mindstudio-probe>=8.3.0
 xlite==0.1.0rc9.dev210
 uc-manager
+coverage >=7.0
