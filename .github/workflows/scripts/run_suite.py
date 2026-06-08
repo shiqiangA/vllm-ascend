@@ -362,7 +362,6 @@ def main() -> None:
     parser.add_argument(
         "--suite",
         required=True,
-        choices=list(suites.keys()),
         help="Name of the test suite to run",
     )
     parser.add_argument(
@@ -372,7 +371,7 @@ def main() -> None:
         default=[],
         help="Config YAML file(s) to load suites from. "
         "If specified, only these configs are used; "
-        "otherwise the default upstream_config.yaml is used.",
+        "otherwise the default configs are used.",
     )
     parser.add_argument(
         "--auto-partition-id",
