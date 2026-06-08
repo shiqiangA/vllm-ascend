@@ -12,11 +12,13 @@ import tabulate
 import yaml
 
 _CONFIG_UPSTREAM = Path(__file__).parent / "upstream_config.yaml"
+_CONFIG_E2E_PR = Path(__file__).parent / "e2e_pr_suite.yaml"
 
 # Each entry: (config_path, is_upstream)
 # When is_upstream is True, sanity_check is skipped for tests from that config.
 _DEFAULT_CONFIGS: list[tuple[Path, bool]] = [
     (_CONFIG_UPSTREAM, True),
+    (_CONFIG_E2E_PR, False),
 ]
 
 
@@ -356,8 +358,6 @@ def _save_timing_json(
 
 
 def main() -> None:
-    suites, upstream_files = load_suites()
-
     parser = argparse.ArgumentParser(description="Run a named e2e test suite")
     parser.add_argument(
         "--suite",
@@ -415,16 +415,18 @@ timing data to improve estimates.",
 
     if args.config:
         config_paths = [(p, False) for p in args.config]
+        skip_sanity = True
     else:
         config_paths = _DEFAULT_CONFIGS
+        skip_sanity = False
     suites, upstream_files = load_suites(config_paths)
 
     if args.suite not in suites:
         available = ", ".join(sorted(suites.keys()))
         parser.error(f"Unknown suite '{args.suite}'. Available suites: {available}")
 
-
-    sanity_check(suites, upstream_files)
+    if not skip_sanity:
+        sanity_check(suites, upstream_files)
 
     all_files = suites[args.suite]
     skipped = [f for f in all_files if f.is_skipped]
