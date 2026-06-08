@@ -72,6 +72,7 @@ def _print_github_actions_annotation(annotation: str, message: str) -> None:
 def run_tests(
     files: list[TestFile],
     continue_on_error: bool = False,
+    enable_coverage: bool = False,
 ) -> tuple[int, list[TestRecord]]:
     """
     Run each TestFile with pytest and collect timing results.
@@ -105,8 +106,29 @@ def run_tests(
                 flush=True,
             )
 
-            start = time.perf_counter()
-            result = subprocess.run(["pytest", "-sv", "--durations=0", "--color=yes", test.name])
+            if enable_coverage:
+                # 获取项目根目录（向上4层）
+                project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
+                # 在项目 tests 目录下创建 outputs/具体测试文件名/covdata 文件夹
+                test_basename = test.name.replace(".py", "").replace("/", "__").replace("//", "__")
+                covdata_dir = os.path.join(project_root, "tests", "outputs", test_basename, "covdata")
+                os.makedirs(covdata_dir, exist_ok=True)
+                print(f"[前置操作] 创建目录: {covdata_dir}", flush=True)
+
+                # 设置环境变量 COVERAGE_FILE（绝对路径格式）
+                coverage_file = os.path.join(covdata_dir, "coverage")
+                os.environ["COVERAGE_FILE"] = coverage_file
+                print(f"[前置操作] 设置 COVERAGE_FILE: {coverage_file}", flush=True)
+
+                start = time.perf_counter()
+                result = subprocess.run([
+                    "python", "-m", "coverage", "run", 
+                    f"--rcfile={os.path.join(project_root, 'tests', 'coveragerc')}", "-m",
+                    "pytest", "-sv", "--durations=0", "--color=yes", test.name
+                ])
+            else:
+                start = time.perf_counter()
+                result = subprocess.run(["pytest", "-sv", "--durations=0", "--color=yes", test.name])
             elapsed = time.perf_counter() - start
             passed = result.returncode == 0
 
@@ -344,6 +366,15 @@ def main() -> None:
         help="Name of the test suite to run",
     )
     parser.add_argument(
+        "--config",
+        type=Path,
+        action="append",
+        default=[],
+        help="Config YAML file(s) to load suites from. "
+        "If specified, only these configs are used; "
+        "otherwise the default upstream_config.yaml is used.",
+    )
+    parser.add_argument(
         "--auto-partition-id",
         type=int,
         default=None,
@@ -370,12 +401,29 @@ timing data to improve estimates.",
         help="Continue running after a test failure (default: True)",
     )
     parser.add_argument(
+        "--enable-coverage",
+        action="store_true",
+        default=False,
+        help="Enable code coverage collection (default: False)",
+    )
+    parser.add_argument(
         "--timing-report-json",
         type=Path,
         default=Path("test_timing_data.json"),
         help="Path to write the JSON timing data for CI aggregation",
     )
     args = parser.parse_args()
+
+    if args.config:
+        config_paths = [(p, False) for p in args.config]
+    else:
+        config_paths = _DEFAULT_CONFIGS
+    suites, upstream_files = load_suites(config_paths)
+
+    if args.suite not in suites:
+        available = ", ".join(sorted(suites.keys()))
+        parser.error(f"Unknown suite '{args.suite}'. Available suites: {available}")
+
 
     sanity_check(suites, upstream_files)
 
@@ -394,6 +442,7 @@ timing data to improve estimates.",
     exit_code, records = run_tests(
         files,
         continue_on_error=args.continue_on_error,
+        enable_coverage=args.enable_coverage,
     )
 
     _save_timing_json(records, args.suite, args.auto_partition_id, args.auto_partition_size, args.timing_report_json)

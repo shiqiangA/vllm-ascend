@@ -1,0 +1,175 @@
+e2e-pr-a2-1card:
+  - name: tests/e2e/pull_request/one_card/aclgraph/test_aclgraph_accuracy.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/aclgraph/test_aclgraph_batch_invariant.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/aclgraph/test_aclgraph_mem.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/compile/test_graphex_norm_quant_fusion.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/compile/test_graphex_qknorm_rope_fusion.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/compile/test_norm_quant_fusion.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/lora/test_ilama_lora.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/lora/test_llama32_lora.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/lora/test_lora_with_spec_decode.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/lora/test_qwen35_densemodel_lora.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/lora/test_qwen3_multi_loras.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/lora/test_qwen3_reranker_lora.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/model_runner_v2/test_basic.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/pooling/test_classification.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/pooling/test_embedding.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/pooling/test_scoring.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/spec_decode/test_dflash.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/spec_decode/test_draft_parallel.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/spec_decode/test_eagle.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/spec_decode/test_extract_hidden_states.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/spec_decode/test_mtp_eagle_correctness.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/spec_decode/test_ngram.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/spec_decode/test_ngram_npu.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/spec_decode/test_suffix.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_attention_fa3.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_batch_invariant.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_camem.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_completion_with_prompt_embeds.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_cpu_offloading.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_guided_decoding.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_minicpm.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_multi_instance.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_multistream_overlap_shared_expert.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_qwen3_0_6b.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_qwen3_5_0_8b.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_qwen3_8b_w8a8.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_qwen3_embedding_0_6b.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_sampler.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_vlm.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/test_xlite.py
+    estimated_time: 300
+
+e2e-pr-a3-2card:
+  - name: tests/e2e/pull_request/two_card/aclgraph/test_aclgraph_capture_replay.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/aclgraph/test_full_graph_mode.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/aclgraph/test_single_request_aclgraph.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/lora/test_ilama_lora_tp2.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/lora/test_llama32_lora_tp2.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/spec_decode/test_spec_decode.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_data_parallel.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_deepseek_multistream_moe.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_disaggregated_encoder.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_external_launcher.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_flashcomm_distributed.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_gpt_oss_distributed.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_moe_routing_replay.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_offline_weight_load.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_prefix_caching.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_qwen3_30b_a3b.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_qwen3_moe_eplb.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_qwen3_performance.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_qwen3_vl_30b_a3b_instruct.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_sequence_parallelism_moe.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_shared_expert_dp.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/two_card/test_sp_pass.py
+    estimated_time: 600
+
+e2e-pr-a3-4card:
+  - name: tests/e2e/pull_request/four_card/long_sequence/test_accuracy.py
+    estimated_time: 900
+  - name: tests/e2e/pull_request/four_card/long_sequence/test_basic.py
+    estimated_time: 900
+  - name: tests/e2e/pull_request/four_card/long_sequence/test_chunked_prefill_cp.py
+    estimated_time: 900
+  - name: tests/e2e/pull_request/four_card/long_sequence/test_mtp.py
+    estimated_time: 900
+  - name: tests/e2e/pull_request/four_card/long_sequence/test_prefix_caching_cp.py
+    estimated_time: 900
+  - name: tests/e2e/pull_request/four_card/spec_decode/test_mtp_qwen3_next.py
+    estimated_time: 900
+  - name: tests/e2e/pull_request/four_card/test_data_parallel_tp2.py
+    estimated_time: 900
+  - name: tests/e2e/pull_request/four_card/test_deepseek_v3_2_w8a8_pruning.py
+    estimated_time: 900
+  - name: tests/e2e/pull_request/four_card/test_deepseek_v4.py
+    estimated_time: 900
+  - name: tests/e2e/pull_request/four_card/test_pipeline_parallel.py
+    estimated_time: 900
+  - name: tests/e2e/pull_request/four_card/test_profiling_chunk_performance.py
+    estimated_time: 900
+  - name: tests/e2e/pull_request/four_card/test_qwen3_5.py
+    estimated_time: 900
+  - name: tests/e2e/pull_request/four_card/test_qwen3_next.py
+    estimated_time: 900
+
+e2e-pr-310p-1card:
+  - name: tests/e2e/pull_request/one_card/_310p/test_classification_310p.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/_310p/test_dense_model_310p.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/_310p/test_embedding_310p.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/_310p/test_scoring_310p.py
+    estimated_time: 300
+  - name: tests/e2e/pull_request/one_card/_310p/test_vl_model_310p.py
+    estimated_time: 300
+
+e2e-pr-310p-4card:
+  - name: tests/e2e/pull_request/four_card/_310p/test_dense_model_310p.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/four_card/_310p/test_moe_model_310p.py
+    estimated_time: 600
+  - name: tests/e2e/pull_request/four_card/_310p/test_vl_model_310p.py
+    estimated_time: 600
