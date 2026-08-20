@@ -609,10 +609,11 @@ class TestAscendMLAMetadataBuilderBuild(TestBase):
             return mock_zeros._mock_wraps(*args, **kwargs)
 
         mock_zeros.side_effect = zeros_override
+        seq_lens = torch.tensor([5, 6])
         common_attn_metadata = AscendCommonAttentionMetadata(
             query_start_loc=torch.tensor([0, 3, 7]),
             query_start_loc_cpu=torch.tensor([0, 3, 7]),
-            seq_lens_cpu=torch.tensor([5, 6]),
+            seq_lens_cpu=seq_lens,
             num_reqs=2,
             num_actual_tokens=10,
             max_query_len=5,
@@ -620,11 +621,12 @@ class TestAscendMLAMetadataBuilderBuild(TestBase):
             block_table_tensor=torch.zeros((10, 10)),
             slot_mapping=torch.tensor(range(20)),
             actual_seq_lengths_q=torch.tensor([0, 1]),
-            positions=torch.tensor([10, 10]),
+            positions=torch.arange(10),
             attn_state=AscendAttentionState.PrefillNoCache,
             num_computed_tokens_cpu=None,
-            seq_lens=None,
+            seq_lens=seq_lens,
             max_seq_len=6,
+            _seq_lens_cpu=seq_lens,
         )
 
         base_inputs = {
@@ -648,7 +650,7 @@ class TestAscendMLAMetadataBuilderBuild(TestBase):
         self.assertIsInstance(metadata, AscendMLAMetadata)
         self.assertEqual(metadata.num_actual_tokens, base_inputs["num_actual_tokens"])
         self.assertTrue(torch.all(metadata.slot_mapping == base_inputs["slot_mapping"]))
-        self.assertEqual(metadata.head_dim, self.kv_cache_spec.head_size)
+        self.assertEqual(metadata.head_dim, self.mock_vllm_config.model_config.get_head_size())
 
     @patch("vllm_ascend.attention.mla_v1.get_cos_and_sin_mla")
     @patch("vllm_ascend.attention.mla_v1.torch.zeros", wraps=torch.zeros)
@@ -664,10 +666,11 @@ class TestAscendMLAMetadataBuilderBuild(TestBase):
 
         mock_zeros.side_effect = zeros_override
 
+        seq_lens = torch.tensor([4, 5, 6])
         common_attn_metadata = AscendCommonAttentionMetadata(
             query_start_loc=torch.tensor([0, 2, 5, 9]),
             query_start_loc_cpu=torch.tensor([0, 2, 5, 9]),
-            seq_lens_cpu=torch.tensor([4, 5, 6]),
+            seq_lens_cpu=seq_lens,
             num_reqs=3,
             num_actual_tokens=15,
             max_query_len=6,
@@ -675,11 +678,12 @@ class TestAscendMLAMetadataBuilderBuild(TestBase):
             block_table_tensor=torch.zeros((10, 10)),
             slot_mapping=torch.tensor(range(20)),
             actual_seq_lengths_q=torch.tensor([0, 1, 2]),
-            positions=torch.tensor([10, 10]),
+            positions=torch.arange(15),
             attn_state=AscendAttentionState.ChunkedPrefill,
             num_computed_tokens_cpu=None,
-            seq_lens=None,
+            seq_lens=seq_lens,
             max_seq_len=6,
+            _seq_lens_cpu=seq_lens,
         )
 
         base_inputs = {
@@ -703,16 +707,17 @@ class TestAscendMLAMetadataBuilderBuild(TestBase):
         self.assertIsInstance(metadata, AscendMLAMetadata)
         self.assertEqual(metadata.num_actual_tokens, base_inputs["num_actual_tokens"])
         self.assertTrue(torch.all(metadata.slot_mapping == base_inputs["slot_mapping"]))
-        self.assertEqual(metadata.head_dim, self.kv_cache_spec.head_size)
+        self.assertEqual(metadata.head_dim, self.mock_vllm_config.model_config.get_head_size())
 
     @patch("vllm_ascend.attention.mla_v1.get_cos_and_sin_mla")
     def test_build_decode_only_metadata(self, mock_get_cos_and_sin_mla):
         torch.Tensor.pin_memory = lambda x: x  # noqa
 
+        seq_lens = torch.tensor([4, 5, 6])
         common_attn_metadata = AscendCommonAttentionMetadata(
             query_start_loc=torch.tensor([0, 1, 2, 3]),
             query_start_loc_cpu=torch.tensor([0, 1, 2, 3]),
-            seq_lens_cpu=torch.tensor([4, 5, 6]),
+            seq_lens_cpu=seq_lens,
             num_reqs=3,
             num_actual_tokens=3,
             max_query_len=1,
@@ -720,11 +725,12 @@ class TestAscendMLAMetadataBuilderBuild(TestBase):
             slot_mapping=torch.tensor(range(3)),
             actual_seq_lengths_q=torch.tensor([0, 1, 2]),
             decode_token_per_req=torch.tensor([1, 1, 1]),
-            positions=torch.tensor([10, 10]),
+            positions=torch.arange(3),
             attn_state=AscendAttentionState.DecodeOnly,
             num_computed_tokens_cpu=None,
-            seq_lens=None,
+            seq_lens=seq_lens,
             max_seq_len=6,
+            _seq_lens_cpu=seq_lens,
         )
 
         base_inputs = {
@@ -741,13 +747,13 @@ class TestAscendMLAMetadataBuilderBuild(TestBase):
             vllm_config=self.mock_vllm_config,
             device=self.mock_device,
         )
-        mock_get_cos_and_sin_mla.return_value = (torch.tensor([10, 10]), torch.Tensor([10, 10]))
+        mock_get_cos_and_sin_mla.return_value = (torch.tensor([10, 10, 10]), torch.tensor([10, 10, 10]))
         metadata = builder.build(1, common_attn_metadata)
 
         self.assertIsInstance(metadata, AscendMLAMetadata)
         self.assertEqual(metadata.num_actual_tokens, base_inputs["num_actual_tokens"])
         self.assertTrue(torch.all(metadata.slot_mapping == base_inputs["slot_mapping"]))
-        self.assertEqual(metadata.head_dim, self.kv_cache_spec.head_size)
+        self.assertEqual(metadata.head_dim, self.mock_vllm_config.model_config.get_head_size())
 
     @patch("vllm_ascend.attention.mla_v1.get_cos_and_sin_mla")
     def test_build_decode_metadata_without_disable_padded_drafter_batch(self, mock_get_cos_and_sin_mla):
@@ -789,10 +795,11 @@ class TestAscendMLAMetadataBuilderBuild(TestBase):
     def test_build_for_graph_capture_decode_only(self, mock_get_cos_and_sin_mla):
         torch.Tensor.pin_memory = lambda x: x  # noqa
 
+        seq_lens = torch.tensor([4, 5, 6])
         common_attn_metadata = AscendCommonAttentionMetadata(
             query_start_loc=torch.tensor([0, 1, 2, 3]),
             query_start_loc_cpu=torch.tensor([0, 1, 2, 3]),
-            seq_lens_cpu=torch.tensor([4, 5, 6]),
+            seq_lens_cpu=seq_lens,
             num_reqs=3,
             num_actual_tokens=3,
             max_query_len=1,
@@ -800,11 +807,12 @@ class TestAscendMLAMetadataBuilderBuild(TestBase):
             slot_mapping=torch.tensor(range(3)),
             actual_seq_lengths_q=torch.tensor([0, 1, 2]),
             decode_token_per_req=torch.tensor([1, 1, 1]),
-            positions=torch.tensor([10, 10]),
+            positions=torch.arange(3),
             attn_state=AscendAttentionState.DecodeOnly,
             num_computed_tokens_cpu=None,
-            seq_lens=None,
+            seq_lens=seq_lens,
             max_seq_len=6,
+            _seq_lens_cpu=seq_lens,
         )
 
         base_inputs = {
@@ -821,13 +829,13 @@ class TestAscendMLAMetadataBuilderBuild(TestBase):
             vllm_config=self.mock_vllm_config,
             device=self.mock_device,
         )
-        mock_get_cos_and_sin_mla.return_value = (torch.tensor([10, 10]), torch.Tensor([10, 10]))
+        mock_get_cos_and_sin_mla.return_value = (torch.tensor([10, 10, 10]), torch.tensor([10, 10, 10]))
         metadata = builder.build_for_graph_capture(common_attn_metadata, AscendAttentionState.DecodeOnly)
 
         self.assertIsInstance(metadata, AscendMLAMetadata)
         self.assertEqual(metadata.num_actual_tokens, base_inputs["num_actual_tokens"])
         self.assertTrue(torch.all(metadata.slot_mapping == base_inputs["slot_mapping"]))
-        self.assertEqual(metadata.head_dim, self.kv_cache_spec.head_size)
+        self.assertEqual(metadata.head_dim, self.mock_vllm_config.model_config.get_head_size())
 
     @patch("vllm_ascend.attention.mla_v1.get_cos_and_sin_mla")
     def test_build_for_graph_capture_prefill(self, mock_get_cos_and_sin_mla):
