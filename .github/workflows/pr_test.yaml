@@ -259,6 +259,7 @@ jobs:
             python3 get-pip.py --break-system-packages
             python3 -m pip install --break-system-packages pyyaml
           fi
+          touch recommended_pytest_paths.txt
           OBS_EXTRA_URL="https://vllm-ascend.obs.cn-north-4.myhuaweicloud.com/ci/precision-test/extra_recommended_tests.yaml"
           http_code=$(curl -sSL --retry 3 --retry-delay 5 -o extra_recommended_tests.obs.yaml -w "%{http_code}" "${OBS_EXTRA_URL}" || echo "000")
           if [ "${http_code}" = "200" ] && [ -s extra_recommended_tests.obs.yaml ]; then
@@ -269,6 +270,14 @@ jobs:
           else
             echo "No extra_recommended_tests.yaml on OBS (HTTP ${http_code}); skipped"
             rm -f extra_recommended_tests.obs.yaml
+          fi
+          # Always append in-repo seed extras (worker a2 UTs, etc.).
+          SEED_EXTRA=".github/workflows/scripts/extra_recommended_tests.yaml"
+          if [ -s "${SEED_EXTRA}" ]; then
+            echo "Merging in-repo seed extras from ${SEED_EXTRA}"
+            python3 .github/workflows/scripts/merge_extra_recommended_tests.py \
+              --list-file recommended_pytest_paths.txt \
+              --extra-yaml "${SEED_EXTRA}"
           fi
 
       - name: Export coverage paths output

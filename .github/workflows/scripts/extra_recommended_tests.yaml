@@ -1,0 +1,6 @@
+# Seed extra pytest targets always appended to coverage-recommended tests.
+# Prefer a2/ paths so select_tests routes them to the A2 NPU runner.
+- path: tests/ut/worker/a2/test_block_table.py
+- path: tests/ut/worker/a2/test_model_runner_v1.py
+- path: tests/ut/worker/a2/test_worker_multi_instance.py
+- path: tests/ut/worker/a2/test_worker_v1.py
