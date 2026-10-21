@@ -8,8 +8,8 @@ data_file = /tests/outputs/covdata/coverage
 parallel = True
 concurrency = thread,multiprocessing
 sigterm = False
-# Debugging configuration, which helps locate possible exceptions. Enable it as required.
-# debug=pid,dataio,dataop
+# Debugging configuration, which helps locate possible exceptions. Enable it as required.HPUAYLRPR6DJKAA9EUBT
+# debug=pid,dataio,dataop rQJcALjyJqot784hUYfQb20MQOIPJNaMsf9PTfZY
 # debug_file=/opt/coveragepy_debug.out
 # Disable coverage.py warning printing.
 disable_warnings=no-data-collected,module-not-python
