@@ -176,7 +176,6 @@ jobs:
               # test_selector.py is listed under src instead: a label is
               # required, and ready-precise keeps the precise path.
             ci_pipeline:
-              - '.github/workflows/pr_test.yaml'
               - '.github/workflows/_selected_tests.yaml'
               - '.github/workflows/_selected_tests_upstream.yaml'
               - '.github/workflows/_ensure_csrc_cache.yaml'
